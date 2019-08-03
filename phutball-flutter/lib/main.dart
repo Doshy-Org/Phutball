@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -46,6 +48,13 @@ class _MyHomePageState extends State<MyHomePage> {
     _initialiseGame();
   }
 
+   void _initialiseGame() { 
+    board = List.generate(rowCount, (i) {
+      return List.generate(columnCount, (j) {
+        return BoardSquare();
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,17 +77,25 @@ class _MyHomePageState extends State<MyHomePage> {
               int columnNumber = (position % columnCount);
 
               Image image;
-              /*if(board[rowNumber][columnNumber].isBall){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+              if(board[rowNumber][columnNumber].isBall == null){ // idk for some reason they are null on init
+                board[rowNumber][columnNumber].isBall = false;
+                board[rowNumber][columnNumber].isDot = false;
+              }
+
+              if(board[rowNumber][columnNumber].isDot == true){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+                image = getImage(ImageType.player);
+              }
+              if(board[rowNumber][columnNumber].isBall == true{  
                 image = getImage(ImageType.ball);
               }
-              else{*/ 
+              else{
                 image = getImage(null);
-              //}
+              }
 
               return InkWell(
                 // drawing square
                   onTap: () { // i hope this works but no idea 
-                    if (board[rowNumber][columnNumber].isBall == false) {
+                    if (board[rowNumber][columnNumber].isBall == false &&board[rowNumber][columnNumber].isDot == false) {                 
                       setState(() {
                         board[rowNumber][columnNumber].isBall = true;
                       });
@@ -106,13 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-   void _initialiseGame() { 
-    board = List.generate(rowCount, (i) {
-      return List.generate(columnCount, (j) {
-        return BoardSquare();
-      });
-    });
-  }
+
 
   Image getImage(ImageType type) {
     switch (type) {
