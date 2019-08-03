@@ -48,78 +48,77 @@ class _MyHomePageState extends State<MyHomePage> {
     _initialiseGame();
   }
 
-   void _initialiseGame() { 
+  void _initialiseGame() {  //probably inits game 
     board = List.generate(rowCount, (i) {
       return List.generate(columnCount, (j) {
         return BoardSquare();
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Phutball"),
       ),
-      body: 
-          GridView.builder(
-            shrinkWrap: true,
+      body: GridView.builder(
+          shrinkWrap: true,
 
-            physics: NeverScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
 
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columnCount,
-            ),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columnCount,
+          ),
 
-            itemBuilder: (context, position) {
-              // Get row and column number of square
-              int rowNumber = (position / columnCount).floor();
-              int columnNumber = (position % columnCount);
+          itemBuilder: (context, position) {
+            // Get row and column number of square
+            int rowNumber = (position / columnCount).floor();
+            int columnNumber = (position % columnCount);
+            
+            Image image;
 
-              Image image;
-              if(board[rowNumber][columnNumber].isBall == null){ // idk for some reason they are null on init
-                board[rowNumber][columnNumber].isBall = false;
-                board[rowNumber][columnNumber].isDot = false;
-              }
+            if(board[rowNumber][columnNumber].isBall == null){ // idk for some reason they are null on init
+              board[rowNumber][columnNumber].isBall = false;
+              board[rowNumber][columnNumber].isDot = false;
+            }
+            
+            if(board[rowNumber][columnNumber].isDot == true){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+              image = getImage(ImageType.player);
+            }
+            else if(board[rowNumber][columnNumber].isBall == true){  
+              image = getImage(ImageType.ball);
+            }
+            else{
+              image = getImage(null);
+            }
 
-              if(board[rowNumber][columnNumber].isDot == true){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
-                image = getImage(ImageType.player);
-              }
-              if(board[rowNumber][columnNumber].isBall == true{  
-                image = getImage(ImageType.ball);
-              }
-              else{
-                image = getImage(null);
-              }
+            return InkWell(
+              // drawing square
+                onTap: () { // i hope this works but no idea 
+                  if (board[rowNumber][columnNumber].isBall == false &&board[rowNumber][columnNumber].isDot == false) {                 
+                    setState(() {
+                      board[rowNumber][columnNumber].isBall = true;
+                    });
+                  }
+                },
 
-              return InkWell(
-                // drawing square
-                  onTap: () { // i hope this works but no idea 
-                    if (board[rowNumber][columnNumber].isBall == false &&board[rowNumber][columnNumber].isDot == false) {                 
-                      setState(() {
-                        board[rowNumber][columnNumber].isBall = true;
-                      });
-                    }
-                  },
-
-
-                splashColor: Colors.lightBlueAccent,
-                child: Container(
-                   decoration: const BoxDecoration(
-                    border: Border(
-                      top: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
-                      left: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
-                      right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                      bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                   ),
+              splashColor: Colors.lightBlueAccent,
+              child: Container(
+                  decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
+                    left: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
+                    right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                    bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
                   ),
-                  child: image,
-                  
                 ),
-              );
-            },
-            itemCount: rowCount * columnCount,
-        )
+                child: image,   
+              ),
+            );
+          },
+          itemCount: rowCount * columnCount,
+      )
     );
   }
 
