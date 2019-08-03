@@ -31,68 +31,62 @@ class MyHomePage extends StatefulWidget {
 class BoardSquare { // each square is this
   bool isDot; //player
   bool isBall;
+  BoardSquare({this.isDot = false, this.isBall = false});
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int rowCount = 19;
   int columnCount = 15;
+
   List<List<BoardSquare>> board; //board xd
-
-  void _incrementCounter() { //idk remove this
-    setState(() {
-
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     _initialiseGame();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Phutball"),
       ),
-      body: //this is just to see that grid works lol
-        /*GridView.builder( //replace this it is gay
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columnCount,),
-
-       // itemBuilder: (_, index) => getImage(ImageType.grid), //itemCount: rowCount*columnCount,
-          itemBuilder: (context, position) { 
-              // Get row and column number of square
-              int rowNumber = (position / columnCount).floor();
-              int columnNumber = (position % columnCount);
-
-              Image image;
-
-              image = getImage(ImageType.grid);
-
-          
-          }*/
+      body: 
           GridView.builder(
             shrinkWrap: true,
+
             physics: NeverScrollableScrollPhysics(),
+
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columnCount,
             ),
+
             itemBuilder: (context, position) {
               // Get row and column number of square
               int rowNumber = (position / columnCount).floor();
               int columnNumber = (position % columnCount);
 
               Image image;
-
-              image = getImage(null);
-              
+              /*if(board[rowNumber][columnNumber].isBall){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+                image = getImage(ImageType.ball);
+              }
+              else{*/ 
+                image = getImage(null);
+              //}
 
               return InkWell(
                 // drawing square
-                splashColor: Colors.grey,
+                  onTap: () { // i hope this works but no idea 
+                    if (board[rowNumber][columnNumber].isBall == false) {
+                      setState(() {
+                        board[rowNumber][columnNumber].isBall = true;
+                      });
+                    }
+                  },
 
+
+                splashColor: Colors.lightBlueAccent,
                 child: Container(
                    decoration: const BoxDecoration(
                     border: Border(
