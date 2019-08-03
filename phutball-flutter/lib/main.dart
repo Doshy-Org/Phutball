@@ -56,13 +56,58 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("Phutball"),
       ),
       body: //this is just to see that grid works lol
-        GridView.builder( //replace this it is gay
+        /*GridView.builder( //replace this it is gay
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: columnCount,),
 
-        itemBuilder: (_, index) => getImage(ImageType.grid),
-          itemCount: rowCount*columnCount,
+       // itemBuilder: (_, index) => getImage(ImageType.grid), //itemCount: rowCount*columnCount,
+          itemBuilder: (context, position) { 
+              // Get row and column number of square
+              int rowNumber = (position / columnCount).floor();
+              int columnNumber = (position % columnCount);
+
+              Image image;
+
+              image = getImage(ImageType.grid);
+
+          
+          }*/
+          GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columnCount,
+            ),
+            itemBuilder: (context, position) {
+              // Get row and column number of square
+              int rowNumber = (position / columnCount).floor();
+              int columnNumber = (position % columnCount);
+
+              Image image;
+
+              image = getImage(null);
+              
+
+              return InkWell(
+                // drawing square
+                splashColor: Colors.grey,
+
+                child: Container(
+                   decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
+                      left: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
+                      right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                      bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                   ),
+                  ),
+                  child: image,
+                  
+                ),
+              );
+            },
+            itemCount: rowCount * columnCount,
         )
     );
   }
