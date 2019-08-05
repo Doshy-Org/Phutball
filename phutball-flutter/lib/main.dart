@@ -35,12 +35,78 @@ class BoardSquare { // each square is this
   bool isBall;
   BoardSquare({this.isDot = false, this.isBall = false});
 }
+class Board {
+  int rowCount;
+  int columnCount;
+  bool inHand;
+  int prevBrow;
+  int prevBcol;
+  List<List<int>> board;
+  Board(int r, int c)
+  {
+    inHand = false;
+    this.rowCount = r;
+    this.columnCount = c;
+    board = new List(rowCount);
+    // prevBrow = (rowCount/2).floor();
+    // prevBcol = (columnCount/2).floor();
+    for(int i = 0; i < rowCount; i++)
+    {
+      List<int> temp = new List(columnCount);
+      for(int j = 0; j < columnCount; j++)
+      {
+        if(i == (rowCount/2).floor() && j == (columnCount/2).floor())
+          temp[j] = 2;
+        else
+          temp[j] = 0;
+      }
+      board[i] = temp;
+    }
+  }
+  bool isDot(int r, int c)
+  {
+    if(board[r][c] == 1)
+      return true;
+    return false;
+  }
+  bool isBall(int r, int c)
+  {
+    if(board[r][c] == 2)
+      return true;
+    return false;
+  }
+  bool setDot(int r, int c)
+  {
+    board[r][c] = 1;
+  }
+  bool setBall(int r, int c)
+  {
+    board[r][c] = 2;
+    this.inHand = false;
+  }
+  bool clear(int r, int c)
+  {
+    board[r][c] = 0;
+  }
+  bool getBall(int r, int c)
+  {
+    this.inHand = true;
+    prevBrow = r;
+    prevBcol = c;
+  }
+  bool hasBall()
+  {
+    return this.inHand;
+  }
+}
 
 class _MyHomePageState extends State<MyHomePage> {
-  int rowCount = 19;
-  int columnCount = 15;
+  
 
-  List<List<BoardSquare>> board; //board xd
+  // List<List<BoardSquare>> board; //board xd
+  static int rowCount = 19;
+  static int columnCount = 15;
+  Board board;
 
   @override
   void initState() {
@@ -49,11 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initialiseGame() {  //probably inits game 
-    board = List.generate(rowCount, (i) {
-      return List.generate(columnCount, (j) {
-        return BoardSquare();
-      });
-    });
+    board = new Board(rowCount,columnCount);
   }
 
   @override
@@ -69,24 +131,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columnCount,
+            mainAxisSpacing: 0.0,
+            crossAxisSpacing: 0.0,
+            childAspectRatio: 1.0,
           ),
 
           itemBuilder: (context, position) {
             // Get row and column number of square
+
             int rowNumber = (position / columnCount).floor();
             int columnNumber = (position % columnCount);
             
             Image image;
-
-            if(board[rowNumber][columnNumber].isBall == null){ // idk for some reason they are null on init
-              board[rowNumber][columnNumber].isBall = false;
-              board[rowNumber][columnNumber].isDot = false;
-            }
             
-            if(board[rowNumber][columnNumber].isDot == true){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+            if(board.isDot(rowNumber,columnNumber)){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
               image = getImage(ImageType.player);
             }
-            else if(board[rowNumber][columnNumber].isBall == true){  
+            else if(board.isBall(rowNumber,columnNumber)){  
               image = getImage(ImageType.ball);
             }
             else{
@@ -95,11 +156,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
             return InkWell(
               // drawing square
-                onTap: () { // i hope this works but no idea 
-                  if (board[rowNumber][columnNumber].isBall == false &&board[rowNumber][columnNumber].isDot == false) {                 
+                onTap: () { //glitchy and needs to be fixed
+                  if(board.hasBall() && !board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber) && (rowNumber == board.prevBrow || columnNumber == board.prevBcol || (columnNumber-board.prevBcol).abs() == (rowNumber-board.prevBrow).abs())) //jump part 2
+                  {
                     setState(() {
-                      board[rowNumber][columnNumber].isBall = true;
+                      // board.setBall(rowNumber,columnNumber);
+                      int a = 1,b = 1;
+                      if(rowNumber < board.prevBrow)
+                      {
+                        a = -1;
+                      }
+                      if(columnNumber < board.prevBcol)
+                      {
+                        b = -1;
+                      }
+                      for(int i = board.prevBrow; i <= rowNumber; i += a) //i in range prevBrow, rowNumber
+                        for(int j = board.prevBcol; j <= columnNumber; j += b) //j in range prevBcol, columnNumber
+                        {
+                          if(board.isDot(i,j) || board.isBall(i,j)) //black stone exists
+                            board.clear(i,j);
+                        }
+                      board.setBall(rowNumber,columnNumber);
                     });
+                  }
+                  else if (!board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber)) //placing a new stone
+                  {                 
+                    setState(() {
+                      board.setDot(rowNumber,columnNumber);
+                    });
+                  }
+                  if(board.isBall(rowNumber,columnNumber)) //jumping tap one
+                  {
+                    setState(() {
+                      board.clear(rowNumber,columnNumber);
+                    });
+                    board.getBall(rowNumber,columnNumber);
                   }
                 },
 
