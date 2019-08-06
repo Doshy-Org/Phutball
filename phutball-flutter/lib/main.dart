@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
 enum ImageType{
   player,
   ball,
-  grid,
   select,
 }
 
@@ -43,6 +42,8 @@ class Board {
   int prevBrow;
   int prevBcol;
   List<List<int>> board;
+  // if the ball is in hand
+
   Board(int r, int c)
   {
     inHand = false;
@@ -76,20 +77,20 @@ class Board {
       return true;
     return false;
   }
-  bool setDot(int r, int c)
+  void setDot(int r, int c)
   {
     board[r][c] = 1;
   }
-  bool setBall(int r, int c)
+  void setBall(int r, int c)
   {
     board[r][c] = 2;
     this.inHand = false;
   }
-  bool clear(int r, int c)
+  void clear(int r, int c)
   {
     board[r][c] = 0;
   }
-  bool getBall(int r, int c)
+  void getBall(int r, int c)
   {
     this.inHand = true;
     prevBrow = r;
@@ -102,12 +103,11 @@ class Board {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
-
   // List<List<BoardSquare>> board; //board xd
   static int rowCount = 19;
   static int columnCount = 15;
   Board board;
+  bool turn;
 
   @override
   void initState() {
@@ -145,93 +145,138 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-           GridView.builder(
-          shrinkWrap: true,
+          GridView.builder(
+            shrinkWrap: true,
 
-          physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
 
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columnCount,
-            mainAxisSpacing: 0.0,
-            crossAxisSpacing: 0.0,
-            childAspectRatio: 1.0,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          itemBuilder: (context, position) {
-            // Get row and column number of square
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columnCount,
+              mainAxisSpacing: 0.0,
+              crossAxisSpacing: 0.0,
+              childAspectRatio: 1.0,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            itemBuilder: (context, position) {
+              // Get row and column number of square
 
-            int rowNumber = (position / columnCount).floor();
-            int columnNumber = (position % columnCount);
-            
-            Image image;
-            
-            if(board.isDot(rowNumber,columnNumber)){  //draw the image into each square
-              image = getImage(ImageType.player);
-            }
-            else if(board.isBall(rowNumber,columnNumber)){  
-              image = getImage(ImageType.ball);
-            }
-            else{
-              image = getImage(null);
-            }
+              int rowNumber = (position / columnCount).floor();
+              int columnNumber = (position % columnCount);
+              
+              Image image;
+              
+              if(board.isDot(rowNumber,columnNumber)){  //draw the image into each square
+                image = getImage(ImageType.player);
+              }
+              else if(board.isBall(rowNumber,columnNumber) &&  board.inHand == true ){  //ball selected
+                image = getImage(ImageType.select);
+              }
+              else if(board.isBall(rowNumber,columnNumber)){  
+                image = getImage(ImageType.ball);
+              }
+              else{
+                image = getImage(null);
+              }
 
-            return InkWell(
-              // draw square
-                onTap: () { //glitchy and needs to be fixed //update square
-                //bruh wtf is this long line
-                  if(board.hasBall() && !board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber) && (rowNumber == board.prevBrow || columnNumber == board.prevBcol || (columnNumber-board.prevBcol).abs() == (rowNumber-board.prevBrow).abs())) //jump part 2
-                  {
-                    setState(() {
-                      // board.setBall(rowNumber,columnNumber);
-                      int a = 1,b = 1;
-                      if(rowNumber < board.prevBrow)
-                      {
-                        a = -1;
-                      }
-                      if(columnNumber < board.prevBcol)
-                      {
-                        b = -1;
-                      }
-                      for(int i = board.prevBrow; i <= rowNumber; i += a) //i in range prevBrow, rowNumber
-                        for(int j = board.prevBcol; j <= columnNumber; j += b) //j in range prevBcol, columnNumber
+              return InkWell(
+                // draw square
+                  onTap: () { //glitchy and needs to be fixed //update square
+                  //bruh wtf is this long line
+                   /* if(board.hasBall() && !board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber) && (rowNumber == board.prevBrow || columnNumber == board.prevBcol || (columnNumber-board.prevBcol).abs() == (rowNumber-board.prevBrow).abs())) //jump part 2
+                    {
+                      setState(() {
+                        // board.setBall(rowNumber,columnNumber);
+                        int a = 1,b = 1;
+                        if(rowNumber < board.prevBrow)
                         {
-                          if(board.isDot(i,j) || board.isBall(i,j)) //black stone exists
-                            board.clear(i,j);
+                          a = -1;
                         }
-                      board.setBall(rowNumber,columnNumber);
-                    });
-                  }
-                  else if (!board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber)) //placing a new stone
-                  {                 
-                    setState(() {
-                      board.setDot(rowNumber,columnNumber);
-                    });
-                  }
-                  if(board.isBall(rowNumber,columnNumber)) //jumping tap one
-                  {
-                    setState(() {
-                      board.clear(rowNumber,columnNumber);
-                    });
-                    board.getBall(rowNumber,columnNumber);
-                  }
-                },
+                        if(columnNumber < board.prevBcol)
+                        {
+                          b = -1;
+                        }
+                        for(int i = board.prevBrow; i <= rowNumber; i += a) //i in range prevBrow, rowNumber
+                          for(int j = board.prevBcol; j <= columnNumber; j += b) //j in range prevBcol, columnNumber
+                          {
+                            if(board.isDot(i,j) || board.isBall(i,j)) //black stone exists
+                              board.clear(i,j);
+                          }
+                        board.setBall(rowNumber,columnNumber);
+                      });
+                    }
+                    else if (!board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber)) //placing a new stone
+                    {                 
+                      setState(() {
+                        board.setDot(rowNumber,columnNumber);
+                      });
+                    }
+                    if(board.isBall(rowNumber,columnNumber)) //jumping tap one
+                    {
+                      setState(() {
+                        board.clear(rowNumber,columnNumber);
+                      });
+                      board.getBall(rowNumber,columnNumber);
+                    }*/
+                    
+                    if(board.isBall(rowNumber,columnNumber) && board.inHand == false){ //select ball
+                      print("work");
+                      setState(() {
+                        board.inHand = true;
+                      });
+                    }
+                    else if((board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber /*|| is not valid */)) && board.inHand == true){ //select ball          
+                      setState(() {
+                        board.inHand = false;
+                      });
+                    }
+                   /* else if(){ //if ball selected and valid move , move ball selected  = false
+                      setState(){
+                        //move ball
+                        board.isHand = false;
+                      }*/
+                    else{
+                      setState(() {
+                        board.setDot(rowNumber,columnNumber);
+                      });
+                    }
+                  },
 
-              splashColor: Colors.lightBlueAccent,
-              child: Container(
-                  decoration: const BoxDecoration(
-                  border: Border(
-                    top: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
-                    left: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
-                    right: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
-                    bottom: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
+                splashColor: Colors.lightBlueAccent,
+                child: Container(
+                    decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
+                      left: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
+                      right: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
+                      bottom: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
+                    ),
                   ),
+                  child: image,   
                 ),
-                child: image,   
-              ),
-            );
-          },
-          itemCount: rowCount * columnCount,
-      )
+              );
+            },
+            itemCount: rowCount * columnCount,
+         ),
+          Container( //top bar oponent info or whatever
+            padding: const EdgeInsets.all(10.0),
+          
+            width: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new RaisedButton(
+                  child: const Text('End Turn'),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.blueGrey,
+                  onPressed: () {
+                    // end turn
+                  },
+                ),      
+                
+              ],
+            ),
+          ),
         ]
       ),
     );
