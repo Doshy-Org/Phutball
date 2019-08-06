@@ -22,6 +22,7 @@ enum ImageType{
   player,
   ball,
   grid,
+  select,
 }
 
 
@@ -121,10 +122,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Phutball"),
-      ),
-      body: GridView.builder(
+      body: ListView(
+        children: <Widget>[
+          Container( //top bar oponent info or whatever
+            padding: const EdgeInsets.all(10.0),
+          
+            width: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Icon(Icons.face, color: Colors.orange,size: 40.0,),
+                Container(width: 7),   
+                Container(           
+                  child: Column(
+                    children: <Widget>[
+                      Text("Level 5 Ai"),
+                      Container(height: 2,),
+                      Text("your turn", style: TextStyle(color: Colors.green)), //change according to whos turn it is
+                    ],
+                  ),
+                ),        
+              ],
+            ),
+          ),
+           GridView.builder(
           shrinkWrap: true,
 
           physics: NeverScrollableScrollPhysics(),
@@ -135,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisSpacing: 0.0,
             childAspectRatio: 1.0,
           ),
-
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           itemBuilder: (context, position) {
             // Get row and column number of square
 
@@ -144,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
             
             Image image;
             
-            if(board.isDot(rowNumber,columnNumber)){  //these lines r giving error- Another exception was thrown: Failed assertion: boolean expression must not be null
+            if(board.isDot(rowNumber,columnNumber)){  //draw the image into each square
               image = getImage(ImageType.player);
             }
             else if(board.isBall(rowNumber,columnNumber)){  
@@ -155,8 +176,9 @@ class _MyHomePageState extends State<MyHomePage> {
             }
 
             return InkWell(
-              // drawing square
-                onTap: () { //glitchy and needs to be fixed
+              // draw square
+                onTap: () { //glitchy and needs to be fixed //update square
+                //bruh wtf is this long line
                   if(board.hasBall() && !board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber) && (rowNumber == board.prevBrow || columnNumber == board.prevBcol || (columnNumber-board.prevBcol).abs() == (rowNumber-board.prevBrow).abs())) //jump part 2
                   {
                     setState(() {
@@ -198,10 +220,10 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                   decoration: const BoxDecoration(
                   border: Border(
-                    top: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
-                    left: BorderSide(width: 1.0, color: Color(0xFFFFFFFFFF)),
-                    right: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
-                    bottom: BorderSide(width: 1.0, color: Color(0xFFFF000000)),
+                    top: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
+                    left: BorderSide(width: 0.5, color: Color(0xFFFFFFFFFF)),
+                    right: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
+                    bottom: BorderSide(width: 0.5, color: Color(0xFFFF000000)),
                   ),
                 ),
                 child: image,   
@@ -210,10 +232,10 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           itemCount: rowCount * columnCount,
       )
+        ]
+      ),
     );
   }
-
-
 
   Image getImage(ImageType type) {
     switch (type) {
@@ -221,8 +243,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return Image.asset('images/ball.png');
       case ImageType.player:
         return Image.asset('images/player.png');
-      case ImageType.grid:
-        return Image.asset('images/grid.png');
+      case ImageType.select:
+        return Image.asset('images/ballSelect.png');
       default:
         return null;
     }
