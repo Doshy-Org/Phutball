@@ -13,8 +13,8 @@ class Board {
     this.rowCount = r;
     this.columnCount = c;
     board = new List(rowCount);
-    // prevBrow = (rowCount/2).floor();
-    // prevBcol = (columnCount/2).floor();
+    prevBrow = (rowCount/2).floor();
+    prevBcol = (columnCount/2).floor();
     for(int i = 0; i < rowCount; i++)
     {
       List<int> temp = new List(columnCount);
@@ -62,5 +62,9 @@ class Board {
   bool hasBall()
   {
     return this.inHand;
+  }
+
+  bool endzone(){
+    return rowCount == 0; // add other row soon
   }
 }

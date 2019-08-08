@@ -77,8 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
               int columnNumber = (position % columnCount);
               
               Image image;
-              Color bgtemp;
-              bgtemp = Colors.white;
             
               if(board.isDot(rowNumber,columnNumber)){  //draw the image into each square
                 image = getImage(ImageType.player);
@@ -134,16 +132,64 @@ class _MyHomePageState extends State<MyHomePage> {
                     }*/
                     
                     if(board.isBall(rowNumber,columnNumber) && board.inHand == false){ //select ball
-                      print("work");
+                      print("select");
                       setState(() {
                         board.inHand = true;
+                         board.prevBcol = columnNumber;
+                        board.prevBrow = rowNumber;
                       });
                     }
-                    else if((board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber /*|| is not valid */)) && board.inHand == true){ //select ball          
-                      setState(() {
-                        board.inHand = false;
-                      });
-                    }
+
+                    else if(board.inHand == true){ //select ball  
+                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){
+                        setState(() {
+                          board.inHand = false;
+                        });
+                      }
+                      else{
+                        bool valid = true;
+                        int a = 1,b = 1;
+                          if(rowNumber < board.prevBrow)
+                          {
+                            a = -1;
+                          }
+                          if(columnNumber < board.prevBcol)
+                          {
+                            b = -1;
+                          }
+                          for(int i = board.prevBrow; i <= rowNumber; i += a){ //i in range prevBrow, rowNumber
+                            for(int j = board.prevBcol; j <= columnNumber; j += b){ //j in range prevBcol, columnNumber
+                              if(!board.isDot(i,j)){
+                                valid = false;
+                                print(valid);      
+                              } //black stone exists  
+                            }
+                          }
+                          print("ree");
+                          print(valid);
+                          if(valid){
+                            print ("truuu");
+                            setState(() {
+                              for(int i = board.prevBrow; i <= rowNumber; i += a){ //i in range prevBrow, rowNumber
+                                for(int j = board.prevBcol; j <= columnNumber; j += b){ //j in range prevBcol, columnNumber
+                                  if(!board.isDot(i,j) || !board.isBall(i,j)){
+                                    board.clear(i,j);      
+                                  }  //black stone exists  
+                                }
+                              }
+                                board.setBall(rowNumber,columnNumber);
+                                board.inHand = false;
+                                board.clear(rowNumber,columnNumber);
+                               
+                            });
+                        } 
+                        else{
+                          setState(() {
+                            board.inHand = false;
+                          });
+                        }     
+                      }  
+                    }     
                    /* else if(){ //if ball selected and valid move , move ball selected  = false
                       setState(){
                         //move ball
