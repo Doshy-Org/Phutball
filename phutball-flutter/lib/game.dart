@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       print("select");
                       setState(() {
                         board.inHand = true;
-                         board.prevBcol = columnNumber;
+                        board.prevBcol = columnNumber;
                         board.prevBrow = rowNumber;
                       });
                     }
@@ -148,46 +148,92 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       else{
                         bool valid = true;
-                        int a = 1,b = 1;
-                          if(rowNumber < board.prevBrow)
+                        int dx = 0,dy = 0; //distance to move x/y each time   //fuck REMEBER THAT 0,0 IS TOP LEFT CORNER
+                          print("click row $rowNumber click col $columnNumber");
+                         
+                          print(board.prevBrow);
+                          print(board.prevBcol);
+
+                          if(rowNumber < board.prevBrow) //my brain cells r gone
                           {
-                            a = -1;
+                            dy = -1;  //changing rows goes up and down so y ;-;
+                            print("x: -1");
                           }
+                          if(rowNumber > board.prevBrow)
+                          {
+                            print("x: 1");
+                            dy = 1;
+                          }
+
                           if(columnNumber < board.prevBcol)
                           {
-                            b = -1;
+                            print("y: 1 (down is pos)");
+                            dx = -1;
                           }
-                          for(int i = board.prevBrow; i <= rowNumber; i += a){ //i in range prevBrow, rowNumber
-                            for(int j = board.prevBcol; j <= columnNumber; j += b){ //j in range prevBcol, columnNumber
-                              if(!board.isDot(i,j)){
-                                valid = false;
-                                print(valid);      
-                              } //black stone exists  
+                          if(columnNumber > board.prevBcol)
+                          {
+                            print("y: 1");
+                            dx = 1;
+                          }
+
+                          print("dx: $dx dy: $dy");
+                          int a = board.prevBcol- columnNumber;
+                          int b = board.prevBrow-rowNumber;
+                           //idk why u cant do in line
+                          print("a: $a b: $b");
+                          int distance  = max(a.abs(), b.abs());
+                          print("distance $distance");
+                          
+                          int x = board.prevBcol ; //this hurts brain
+                          int y = board.prevBrow; //x changes when col++
+                          
+                          for(int i = 0; i < distance-2 ; i++){
+                            x+=dx;
+                            y+=dy;
+                            print("x: $x y: $y");
+                            if(!board.isDot(x, y)){
+                              valid = false;
                             }
                           }
+                          
+                          print("valid $valid" );
+
+                          /*for(int i = board.prevBrow+a; i < rowNumber; i += a){ //i in range prevBrow, rowNumber
+                            for(int j = board.prevBcol+b; j < columnNumber; j += b){ //j in range prevBcol, columnNumber
+                              print(i); 
+                              print(j);  
+                              if(!board.isDot(i,j)){
+                                valid = false;                                   
+                              } //black stone exists  
+                            }*/
+                          
+                          /*
                           print("ree");
                           print(valid);
                           if(valid){
                             print ("truuu");
                             setState(() {
-                              for(int i = board.prevBrow; i <= rowNumber; i += a){ //i in range prevBrow, rowNumber
-                                for(int j = board.prevBcol; j <= columnNumber; j += b){ //j in range prevBcol, columnNumber
-                                  if(!board.isDot(i,j) || !board.isBall(i,j)){
+                              for(int i = board.prevBrow; i < rowNumber; i += a){ //i in range prevBrow, rowNumber
+                                for(int j = board.prevBcol; j < columnNumber; j += b){ //j in range prevBcol, columnNumber
+                                  if(board.isDot(i,j) || board.isBall(i,j)){
+                                    print ("cleer");
                                     board.clear(i,j);      
                                   }  //black stone exists  
                                 }
                               }
-                                board.setBall(rowNumber,columnNumber);
-                                board.inHand = false;
-                                board.clear(rowNumber,columnNumber);
+                              board.setBall(rowNumber,columnNumber);
+                              board.inHand = false;
+                              
                                
                             });
+                            
                         } 
                         else{
                           setState(() {
                             board.inHand = false;
                           });
-                        }     
+                        }*/  
+                           
                       }  
                     }     
                    /* else if(){ //if ball selected and valid move , move ball selected  = false
@@ -195,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         //move ball
                         board.isHand = false;
                       }*/
-                    else{
+                    else{ 
                       setState(() {
                         board.setDot(rowNumber,columnNumber);
                       });
@@ -216,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             itemCount: rowCount * columnCount,
          ),
-          Container( //bottom bar oponent info or whatever
+          Container( //bottom bar info game or whatever
             padding: const EdgeInsets.all(10.0),
           
             width: double.infinity,

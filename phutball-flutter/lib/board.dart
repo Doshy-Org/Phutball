@@ -20,7 +20,7 @@ class Board {
       List<int> temp = new List(columnCount);
       for(int j = 0; j < columnCount; j++)
       {
-        if(i == (rowCount/2).floor() && j == (columnCount/2).floor())
+        if(i == prevBrow && j == prevBcol)
           temp[j] = 2;
         else
           temp[j] = 0;
