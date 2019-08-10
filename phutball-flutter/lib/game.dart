@@ -192,6 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             y+=dy;
                             print("x: $x y: $y");
                             if(!board.isDot(x, y)){
+                              print("x: $x y: $y-------");
                               valid = false;
                             }
                           }
