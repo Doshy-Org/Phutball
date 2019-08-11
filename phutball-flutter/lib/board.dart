@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Board {
   int rowCount;
   int columnCount;
@@ -5,6 +7,8 @@ class Board {
   int prevBrow;
   int prevBcol;
   List<List<int>> board;
+  int dx,dy;
+  int distance;
 
   int moved; // if you have moved you can end turn or undo, cannot click more
   bool playerTurn;
@@ -16,7 +20,7 @@ class Board {
     this.columnCount = c;
     board = new List(rowCount);
     prevBrow = (rowCount/2).floor();
-    prevBcol = (columnCount/2).floor(); 
+    prevBcol = (columnCount/2).floor();
     for(int i = 0; i < rowCount; i++)
     {
       List<int> temp = new List(columnCount);
@@ -58,12 +62,78 @@ class Board {
   void getBall(int r, int c)
   {
     this.inHand = true;
-    prevBrow = r;
-    prevBcol = c;
+    this.prevBrow = r;
+    this.prevBcol = c;
+  }
+  void dropBall()
+  {
+    this.inHand = false;
   }
   bool hasBall()
   {
     return this.inHand;
+  }
+  void initJump(int rowNumber, int columnNumber)
+  {
+    dx = 0; dy = 0; //resets
+    if(rowNumber < this.prevBrow) //my brain cells r gone
+    {
+      dy = -1;  //changing rows goes up and down so y 
+      print("y: -1");
+    }
+    if(rowNumber > this.prevBrow)
+    {
+      print("y: 1");
+      dy = 1;
+    }
+    if(columnNumber < this.prevBcol)
+    {
+      print("x: 1 (down is pos)");
+      dx = -1;
+    }
+    if(columnNumber > this.prevBcol)
+    {
+      print("x: 1");
+      dx = 1;
+    }
+
+    int a = this.prevBcol- columnNumber; //finding distance needed to get from ball to click location
+    int b = this.prevBrow-rowNumber;
+    print("a: $a b: $b");
+    distance  = max(a.abs(), b.abs());
+    print("distance $distance");
+  }
+  bool checkJump()
+  {
+      if(distance == 1){//distance = 1 means user clicked space next to ball
+        return false;
+      }
+      bool valid = true;//check if location is a valid move
+    // int dx = 0,dy = 0; //distance to move x/y each time   // REMEBER THAT 0,0 IS TOP LEFT CORNER
+      int x = this.prevBcol; //this hurts brain
+      int y = this.prevBrow; //x changes when col++
+      
+      for(int i = 0; i < distance-1 ; i++){
+        x+=dx;
+        y+=dy;
+        if(!this.isDot(y, x)){ // REEEEEEEEEEe idk why its y x but works
+          valid = false;
+          break;
+        }
+      }
+    return valid;
+  }
+  void jump(int rowNumber, int columnNumber)
+  {
+    int x = this.prevBcol; //reset x and y || alternate could save locations into a matrix
+    int y = this.prevBrow; 
+    for(int i = 0; i < distance-1 ; i++){ // matrix would prob be slower / same
+      x+=dx;
+      y+=dy;
+      this.clear(y, x);      
+    }
+    this.clear(this.prevBrow, this.prevBcol);
+    this.setBall(rowNumber,columnNumber);
   }
 
   bool endzone(){  //idk what this is rn

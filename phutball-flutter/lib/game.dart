@@ -1,6 +1,5 @@
 import 'package:phutball/board.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 enum ImageType{
   player,
@@ -94,103 +93,40 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return InkWell(
                 // draw square
-                  onTap: () { 
-                    if(board.isBall(rowNumber,columnNumber) && board.inHand == false){ //select ball
+                onTap: () { 
+                  if(board.isBall(rowNumber,columnNumber) && !board.hasBall()){ //select ball
+                    setState(() {
+                      board.getBall(rowNumber, columnNumber);
+                    });
+                  }
+
+                  else if(board.hasBall())
+                  { //ball is selected, clicked a square
+                    if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally invalid so deselect ball
                       setState(() {
-                        board.inHand = true;
-                        board.prevBcol = columnNumber; //ball start location
-                        board.prevBrow = rowNumber;
+                        board.dropBall();
                       });
                     }
-
-                    else if(board.inHand == true){ //ball is selected, clicked a square
-                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally 
-                      //invalid so deselect ball
+                    else{
+                      board.initJump(rowNumber,columnNumber);
+                      if(board.checkJump()){ //continue with move
                         setState(() {
-                          board.inHand = false;
+                          board.jump(rowNumber,columnNumber);
                         });
-                      }
-                      else{
-                        bool valid = true; //check if location is a valid move
-                        int dx = 0,dy = 0; //distance to move x/y each time   // REMEBER THAT 0,0 IS TOP LEFT CORNER
-
-                        if(rowNumber < board.prevBrow) //my brain cells r gone
-                        {
-                          dy = -1;  //changing rows goes up and down so y 
-                          print("y: -1");
-                        }
-                        if(rowNumber > board.prevBrow)
-                        {
-                          print("y: 1");
-                          dy = 1;
-                        }
-                        if(columnNumber < board.prevBcol)
-                        {
-                          print("x: 1 (down is pos)");
-                          dx = -1;
-                        }
-                        if(columnNumber > board.prevBcol)
-                        {
-                          print("x: 1");
-                          dx = 1;
-                        }
-
-                        int a = board.prevBcol- columnNumber; //finding distance needed to get from ball to click location
-                        int b = board.prevBrow-rowNumber;
-                        print("a: $a b: $b");
-                        int distance  = max(a.abs(), b.abs());
-                        print("distance $distance");
-
-                        
-                        if(distance == 1){//distance = 1 means user clciked space next to ball
-                          setState(() {
-                            board.inHand = false; //deselect ball, invalid move
-                          });
-                        }
-                        else{  //continue with check
-                          int x = board.prevBcol; //this hurts brain
-                          int y = board.prevBrow; //x changes when col++
-
-                          
-                          for(int i = 0; i < distance-1 ; i++){
-                            x+=dx;
-                            y+=dy;
-                            if(!board.isDot(y, x)){ // REEEEEEEEEEe idk why its y x but works
-                              valid = false;
-                              break;
-                            }
-                          }
-                          
-                          print("valid $valid" );
-
-                          if(valid){ //continue with move
-                            int x = board.prevBcol; //reset x and y || alternate could save locations into a matrix
-                            int y = board.prevBrow; 
-                            setState(() {
-                              for(int i = 0; i < distance-1 ; i++){ // matrix would prob be slower / same
-                                x+=dx;
-                                y+=dy;
-                                board.clear(y, x);      
-                              }
-                              board.clear(board.prevBrow, board.prevBcol);
-                              board.setBall(rowNumber,columnNumber);
-                              board.inHand = false;
-                            });                          
-                          } 
-                          else{ //deselect ball
-                            setState(() {
-                              board.inHand = false;
-                            });
-                          }        
-                        }  
-                      }    
-                    } 
-                    else{ 
-                      setState(() {
-                        board.setDot(rowNumber,columnNumber);
-                      });
-                    }                         
-                  },
+                      } 
+                      else{ //deselect ball
+                        setState(() {
+                          board.dropBall();
+                        });
+                      }        
+                    }  
+                  } 
+                  else{ 
+                    setState(() {
+                      board.setDot(rowNumber,columnNumber);
+                    });
+                  }                         
+                },
 
                 splashColor: Colors.lightBlueAccent,
                 child: Container(     
