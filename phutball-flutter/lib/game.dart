@@ -1,4 +1,7 @@
+import 'dart:collection';
+import 'dart:math';
 import 'package:phutball/board.dart';
+import 'package:phutball/player.dart';
 import 'package:flutter/material.dart';
 
 enum ImageType{
@@ -20,7 +23,9 @@ class _MyHomePageState extends State<MyHomePage> {
   static int rowCount = 19;
   static int columnCount = 15;
   Board board;
+  Player a, b;
   bool turn;
+  Queue q = new Queue();
 
   @override
   void initState() {
@@ -30,6 +35,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initialiseGame() {  //probably inits game 
     board = new Board(rowCount,columnCount);
+    a = new Player("A");
+    b = new Player("B");
+    var rng = new Random();
+    if(rng.nextInt(10)%2 == 0) //big brain ?
+    {
+      q.add(a);
+      q.add(b);
+    }
+    else
+    {
+      q.add(b); 
+      q.add(a);
+    }
+    q.first.startMove();
   }
 
   @override
@@ -92,40 +111,50 @@ class _MyHomePageState extends State<MyHomePage> {
               }
 
               return InkWell(
-                // draw square
-                onTap: () { 
-                  if(board.isBall(rowNumber,columnNumber) && !board.hasBall()){ //select ball
-                    setState(() {
-                      board.getBall(rowNumber, columnNumber);
-                    });
-                  }
-
-                  else if(board.hasBall())
-                  { //ball is selected, clicked a square
-                    if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally invalid so deselect ball
+                onTap: () // draw square
+                { 
+                  if(q.first.canMakeMove())
+                  {
+                    if(board.isBall(rowNumber,columnNumber) && !board.hasBall()){ //select ball
+                      print("ball selected");
                       setState(() {
-                        board.dropBall();
+                        board.getBall(rowNumber, columnNumber);
                       });
                     }
-                    else{
-                      board.initJump(rowNumber,columnNumber);
-                      if(board.checkJump()){ //continue with move
-                        setState(() {
-                          board.jump(rowNumber,columnNumber);
-                        });
-                      } 
-                      else{ //deselect ball
+
+                    else if(board.hasBall())
+                    { //ball is selected, clicked a square
+                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally invalid so deselect ball
                         setState(() {
                           board.dropBall();
                         });
-                      }        
-                    }  
-                  } 
-                  else{ 
-                    setState(() {
-                      board.setDot(rowNumber,columnNumber);
-                    });
-                  }                         
+                      }
+                      else{
+                        board.initJump(rowNumber,columnNumber);
+                        if(board.checkJump()){ //continue with move
+                          setState(() {
+                            board.jump(rowNumber,columnNumber);
+                            q.first.makeJump(); //not sure if needs to be in setState
+                          });
+                        } 
+                        else{ //deselect ball
+                          setState(() {
+                            board.dropBall();
+                          });
+                        }        
+                      }  
+                    } 
+                    else if(!q.first.hasJumped()){ 
+                      setState(() {
+                        board.setDot(rowNumber,columnNumber);
+                        q.first.makePlacement(); //idk if needs to be in setState
+                      });
+                    }
+                    else{ //player done with jumping
+                      //cant do anything
+                      q.first.noMoreMoves();
+                    }
+                  }                        
                 },
 
                 splashColor: Colors.lightBlueAccent,
@@ -155,6 +184,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   splashColor: Colors.white,
                   onPressed: () {
                     // end turn
+                    if(q.first.hasJumped() || q.first.hasPlaced())
+                      q.first.endMove();
+                    q.add(q.first);
+                    q.removeFirst();
+                    // print(q.first.name);
+                    // print(q.last.name);
+                    q.first.startMove();
                   },
                 ),
                 new Container(width: 10),

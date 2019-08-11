@@ -16,11 +16,13 @@ class Board {
   Board(int r, int c)
   {
     inHand = false;
-    this.rowCount = r;
-    this.columnCount = c;
+    rowCount = r;
+    columnCount = c;
     board = new List(rowCount);
+    // board = new List<List<int>>.filled(rowCount, new List<int>(columnCount), growable: false); //big brain code
     prevBrow = (rowCount/2).floor();
     prevBcol = (columnCount/2).floor();
+    // board[prevBrow][prevBcol] = 2;
     for(int i = 0; i < rowCount; i++)
     {
       List<int> temp = new List(columnCount);
@@ -36,15 +38,11 @@ class Board {
   }
   bool isDot(int r, int c)
   {
-    if(board[r][c] == 1)
-      return true;
-    return false;
+    return board[r][c] == 1;
   }
   bool isBall(int r, int c)
   {
-    if(board[r][c] == 2)
-      return true;
-    return false;
+    return board[r][c] == 2;
   }
   void setDot(int r, int c)
   {
