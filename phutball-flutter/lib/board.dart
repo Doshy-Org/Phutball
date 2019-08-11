@@ -5,7 +5,9 @@ class Board {
   int prevBrow;
   int prevBcol;
   List<List<int>> board;
-  // if the ball is in hand
+
+  int moved; // if you have moved you can end turn or undo, cannot click more
+  bool playerTurn;
 
   Board(int r, int c)
   {
@@ -14,7 +16,7 @@ class Board {
     this.columnCount = c;
     board = new List(rowCount);
     prevBrow = (rowCount/2).floor();
-    prevBcol = (columnCount/2).floor();
+    prevBcol = (columnCount/2).floor(); 
     for(int i = 0; i < rowCount; i++)
     {
       List<int> temp = new List(columnCount);
@@ -64,7 +66,11 @@ class Board {
     return this.inHand;
   }
 
-  bool endzone(){
+  bool endzone(){  //idk what this is rn
     return rowCount == 0; // add other row soon
   }
+
+  void setBoard (Board b){
+      //will this work
+  } 
 }

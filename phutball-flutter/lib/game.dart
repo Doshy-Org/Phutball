@@ -17,6 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // List<List<BoardSquare>> board; //board xd
+  //classic is 19 rows 15 cols
   static int rowCount = 19;
   static int columnCount = 15;
   Board board;
@@ -93,160 +94,102 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return InkWell(
                 // draw square
-                  onTap: () { //glitchy and needs to be fixed //update square
-                  //bruh wtf is this long line
-                   /* if(board.hasBall() && !board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber) && (rowNumber == board.prevBrow || columnNumber == board.prevBcol || (columnNumber-board.prevBcol).abs() == (rowNumber-board.prevBrow).abs())) //jump part 2
-                    {
-                      setState(() {
-                        // board.setBall(rowNumber,columnNumber);
-                        int a = 1,b = 1;
-                        if(rowNumber < board.prevBrow)
-                        {
-                          a = -1;
-                        }
-                        if(columnNumber < board.prevBcol)
-                        {
-                          b = -1;
-                        }
-                        for(int i = board.prevBrow; i <= rowNumber; i += a) //i in range prevBrow, rowNumber
-                          for(int j = board.prevBcol; j <= columnNumber; j += b) //j in range prevBcol, columnNumber
-                          {
-                            if(board.isDot(i,j) || board.isBall(i,j)) //black stone exists
-                              board.clear(i,j);
-                          }
-                        board.setBall(rowNumber,columnNumber);
-                      });
-                    }
-                    else if (!board.isBall(rowNumber,columnNumber) && !board.isDot(rowNumber,columnNumber)) //placing a new stone
-                    {                 
-                      setState(() {
-                        board.setDot(rowNumber,columnNumber);
-                      });
-                    }
-                    if(board.isBall(rowNumber,columnNumber)) //jumping tap one
-                    {
-                      setState(() {
-                        board.clear(rowNumber,columnNumber);
-                      });
-                      board.getBall(rowNumber,columnNumber);
-                    }*/
-                    
+                  onTap: () { 
                     if(board.isBall(rowNumber,columnNumber) && board.inHand == false){ //select ball
-                      print("select");
                       setState(() {
                         board.inHand = true;
-                        board.prevBcol = columnNumber;
+                        board.prevBcol = columnNumber; //ball start location
                         board.prevBrow = rowNumber;
                       });
                     }
 
-                    else if(board.inHand == true){ //select ball  
-                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){
+                    else if(board.inHand == true){ //ball is selected, clicked a square
+                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally 
+                      //invalid so deselect ball
                         setState(() {
                           board.inHand = false;
                         });
                       }
                       else{
-                        bool valid = true;
-                        int dx = 0,dy = 0; //distance to move x/y each time   //fuck REMEBER THAT 0,0 IS TOP LEFT CORNER
-                          print("click row $rowNumber click col $columnNumber");
-                         
-                          print(board.prevBrow);
-                          print(board.prevBcol);
+                        bool valid = true; //check if location is a valid move
+                        int dx = 0,dy = 0; //distance to move x/y each time   // REMEBER THAT 0,0 IS TOP LEFT CORNER
 
-                          if(rowNumber < board.prevBrow) //my brain cells r gone
-                          {
-                            dy = -1;  //changing rows goes up and down so y ;-;
-                            print("x: -1");
-                          }
-                          if(rowNumber > board.prevBrow)
-                          {
-                            print("x: 1");
-                            dy = 1;
-                          }
+                        if(rowNumber < board.prevBrow) //my brain cells r gone
+                        {
+                          dy = -1;  //changing rows goes up and down so y 
+                          print("y: -1");
+                        }
+                        if(rowNumber > board.prevBrow)
+                        {
+                          print("y: 1");
+                          dy = 1;
+                        }
+                        if(columnNumber < board.prevBcol)
+                        {
+                          print("x: 1 (down is pos)");
+                          dx = -1;
+                        }
+                        if(columnNumber > board.prevBcol)
+                        {
+                          print("x: 1");
+                          dx = 1;
+                        }
 
-                          if(columnNumber < board.prevBcol)
-                          {
-                            print("y: 1 (down is pos)");
-                            dx = -1;
-                          }
-                          if(columnNumber > board.prevBcol)
-                          {
-                            print("y: 1");
-                            dx = 1;
-                          }
+                        int a = board.prevBcol- columnNumber; //finding distance needed to get from ball to click location
+                        int b = board.prevBrow-rowNumber;
+                        print("a: $a b: $b");
+                        int distance  = max(a.abs(), b.abs());
+                        print("distance $distance");
 
-                          print("dx: $dx dy: $dy");
-                          int a = board.prevBcol- columnNumber;
-                          int b = board.prevBrow-rowNumber;
-                           //idk why u cant do in line
-                          print("a: $a b: $b");
-                          int distance  = max(a.abs(), b.abs());
-                          print("distance $distance");
-                          
-                          int x = board.prevBcol ; //this hurts brain
+                        
+                        if(distance == 1){//distance = 1 means user clciked space next to ball
+                          setState(() {
+                            board.inHand = false; //deselect ball, invalid move
+                          });
+                        }
+                        else{  //continue with check
+                          int x = board.prevBcol; //this hurts brain
                           int y = board.prevBrow; //x changes when col++
+
                           
-                          for(int i = 0; i < distance-2 ; i++){
+                          for(int i = 0; i < distance-1 ; i++){
                             x+=dx;
                             y+=dy;
-                            print("x: $x y: $y");
-                            if(!board.isDot(x, y)){
-                              print("x: $x y: $y-------");
+                            if(!board.isDot(y, x)){ // REEEEEEEEEEe idk why its y x but works
                               valid = false;
+                              break;
                             }
                           }
                           
                           print("valid $valid" );
 
-                          /*for(int i = board.prevBrow+a; i < rowNumber; i += a){ //i in range prevBrow, rowNumber
-                            for(int j = board.prevBcol+b; j < columnNumber; j += b){ //j in range prevBcol, columnNumber
-                              print(i); 
-                              print(j);  
-                              if(!board.isDot(i,j)){
-                                valid = false;                                   
-                              } //black stone exists  
-                            }*/
-                          
-                          /*
-                          print("ree");
-                          print(valid);
-                          if(valid){
-                            print ("truuu");
+                          if(valid){ //continue with move
+                            int x = board.prevBcol; //reset x and y || alternate could save locations into a matrix
+                            int y = board.prevBrow; 
                             setState(() {
-                              for(int i = board.prevBrow; i < rowNumber; i += a){ //i in range prevBrow, rowNumber
-                                for(int j = board.prevBcol; j < columnNumber; j += b){ //j in range prevBcol, columnNumber
-                                  if(board.isDot(i,j) || board.isBall(i,j)){
-                                    print ("cleer");
-                                    board.clear(i,j);      
-                                  }  //black stone exists  
-                                }
+                              for(int i = 0; i < distance-1 ; i++){ // matrix would prob be slower / same
+                                x+=dx;
+                                y+=dy;
+                                board.clear(y, x);      
                               }
+                              board.clear(board.prevBrow, board.prevBcol);
                               board.setBall(rowNumber,columnNumber);
                               board.inHand = false;
-                              
-                               
+                            });                          
+                          } 
+                          else{ //deselect ball
+                            setState(() {
+                              board.inHand = false;
                             });
-                            
-                        } 
-                        else{
-                          setState(() {
-                            board.inHand = false;
-                          });
-                        }*/  
-                           
-                      }  
-                    }     
-                   /* else if(){ //if ball selected and valid move , move ball selected  = false
-                      setState(){
-                        //move ball
-                        board.isHand = false;
-                      }*/
+                          }        
+                        }  
+                      }    
+                    } 
                     else{ 
                       setState(() {
                         board.setDot(rowNumber,columnNumber);
                       });
-                    }
+                    }                         
                   },
 
                 splashColor: Colors.lightBlueAccent,
@@ -265,7 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
          ),
           Container( //bottom bar info game or whatever
             padding: const EdgeInsets.all(10.0),
-          
             width: double.infinity,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,6 +219,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   splashColor: Colors.white,
                   onPressed: () {
                     // end turn
+                  },
+                ),
+                new Container(width: 10),
+                new RaisedButton(
+                  child: const Text('Reset'),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.white,
+                  onPressed: () {
+                    // reset turn
                   },
                 ),      
               ],
@@ -306,3 +258,4 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 // i have no clue what im doing  https://github.com/deven98/FlutterMinesweeper
+//uwu quakquakquak

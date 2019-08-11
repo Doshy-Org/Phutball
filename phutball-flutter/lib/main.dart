@@ -1,4 +1,12 @@
-import 'dart:math';
+/*
+todo
+array to erase dots
+undo fucnction
+end game condition
+end turn
+indicate endzones
+*/
+
 import 'package:phutball/game.dart';
 import 'package:flutter/material.dart';
 
