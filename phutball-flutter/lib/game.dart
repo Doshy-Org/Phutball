@@ -26,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Player a, b;
   bool turn;
   Queue q = new Queue();
+  
 
   @override
   void initState() {
@@ -51,8 +52,28 @@ class _MyHomePageState extends State<MyHomePage> {
     q.first.startMove();
   }
 
+  bool _endbuttonenabled = false;
+  bool _resetbuttonenabled  = false;
+
+
+  
+
   @override
   Widget build(BuildContext context) {
+
+    var _endAction;  //end game button calls this
+
+    if(q.first.hasJumped() || q.first.hasPlaced()){
+      _endAction = (){
+        setState(() { 
+          q.first.endMove();
+          q.add(q.first);
+          q.removeFirst(); 
+          q.first.startMove();
+        });
+      };
+    }
+
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -147,7 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     else if(!q.first.hasJumped()){ 
                       setState(() {
                         board.setDot(rowNumber,columnNumber);
-                        q.first.makePlacement(); //idk if needs to be in setState
+                        q.first.makePlacement(); //idk if needs to be in setState        i think they should be
+
                       });
                     }
                     else{ //player done with jumping
@@ -182,16 +204,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Theme.of(context).accentColor,
                   elevation: 4.0,
                   splashColor: Colors.white,
-                  onPressed: () {
+                  onPressed: _endAction, //refer to top
                     // end turn
-                    if(q.first.hasJumped() || q.first.hasPlaced())
+                    /*if(q.first.hasJumped() || q.first.hasPlaced())
                       q.first.endMove();
                     q.add(q.first);
                     q.removeFirst();
                     // print(q.first.name);
                     // print(q.last.name);
-                    q.first.startMove();
-                  },
+                    q.first.startMove();*/
                 ),
                 new Container(width: 10),
                 new RaisedButton(
@@ -199,9 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Theme.of(context).accentColor,
                   elevation: 4.0,
                   splashColor: Colors.white,
-                  onPressed: () {
-                    // reset turn
-                  },
+                  onPressed: null,
                 ),      
               ],
             ),
