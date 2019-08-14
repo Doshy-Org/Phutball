@@ -142,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         board.getBall(rowNumber, columnNumber);
                       });
                     }
-
                     else if(board.hasBall())
                     { //ball is selected, clicked a square
                       if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally invalid so deselect ball
@@ -165,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         }        
                       }  
                     } 
-                    else if(!q.first.hasJumped()){ 
+                    else if(!q.first.hasJumped() && !(board.isDot(rowNumber, columnNumber))){ 
                       setState(() {
                         board.setDot(rowNumber,columnNumber);
                         q.first.makePlacement(); //idk if needs to be in setState        i think they should be

@@ -77,29 +77,29 @@ class Board {
     if(rowNumber < this.prevBrow) //my brain cells r gone
     {
       dy = -1;  //changing rows goes up and down so y 
-      print("y: -1");
+      //print("y: -1");
     }
     if(rowNumber > this.prevBrow)
     {
-      print("y: 1");
+      //print("y: 1");
       dy = 1;
     }
     if(columnNumber < this.prevBcol)
     {
-      print("x: 1 (down is pos)");
+      //print("x: 1 (down is pos)");
       dx = -1;
     }
     if(columnNumber > this.prevBcol)
     {
-      print("x: 1");
+      //print("x: 1");
       dx = 1;
     }
 
     int a = this.prevBcol- columnNumber; //finding distance needed to get from ball to click location
     int b = this.prevBrow-rowNumber;
-    print("a: $a b: $b");
+    //print("a: $a b: $b");
     distance  = max(a.abs(), b.abs());
-    print("distance $distance");
+   // print("distance $distance");
   }
 
   bool checkJump(int rowNumber, int columnNumber)
@@ -115,8 +115,8 @@ class Board {
       for(int i = 0; i < distance ; i++){
         x+=dx;
         y+=dy;
-        print(distance);
-        print(i);
+        //print(distance);
+        //print(i);
         if(i == distance-1){   
           if(y != rowNumber ||  x != columnNumber){
             valid = false;
@@ -128,7 +128,7 @@ class Board {
           break;
         }
       }
-      print(valid);
+      //print(valid);
     return valid;
   }
   void jump(int rowNumber, int columnNumber)
