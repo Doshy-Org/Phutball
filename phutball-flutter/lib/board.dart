@@ -101,7 +101,8 @@ class Board {
     distance  = max(a.abs(), b.abs());
     print("distance $distance");
   }
-  bool checkJump()
+
+  bool checkJump(int rowNumber, int columnNumber)
   {
       if(distance == 1){//distance = 1 means user clicked space next to ball
         return false;
@@ -111,14 +112,23 @@ class Board {
       int x = this.prevBcol; //this hurts brain
       int y = this.prevBrow; //x changes when col++
       
-      for(int i = 0; i < distance-1 ; i++){
+      for(int i = 0; i < distance ; i++){
         x+=dx;
         y+=dy;
-        if(!this.isDot(y, x)){ // REEEEEEEEEEe idk why its y x but works
+        print(distance);
+        print(i);
+        if(i == distance-1){   
+          if(y != rowNumber ||  x != columnNumber){
+            valid = false;
+          }
+          break;
+        }
+        else if(!this.isDot(y, x)){ // REEEEEEEEEEe idk why its y x but works
           valid = false;
           break;
         }
       }
+      print(valid);
     return valid;
   }
   void jump(int rowNumber, int columnNumber)

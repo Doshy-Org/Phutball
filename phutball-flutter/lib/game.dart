@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                       else{
                         board.initJump(rowNumber,columnNumber);
-                        if(board.checkJump()){ //continue with move
+                        if(board.checkJump(rowNumber,columnNumber)){ //continue with move
                           setState(() {
                             board.jump(rowNumber,columnNumber);
                             q.first.makeJump(); //not sure if needs to be in setState
