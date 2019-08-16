@@ -172,7 +172,12 @@ class Board {
   }
 
   bool endzone(){  //idk what this is rn
-    return rowCount == 0; // add other row soon
+    return rowCount == 0 || rowCount == 18; // add other row soon
+  }
+
+  void endGame()
+  {
+    print("ree");
   }
 
   void setBoard (Board b){

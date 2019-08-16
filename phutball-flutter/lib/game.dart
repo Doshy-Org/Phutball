@@ -51,6 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     q.first.startMove();
   }
+  void _endGame()
+  {
+    print("Game Over");
+    board.endGame();
+  }
 
   bool _endbuttonenabled = false;
   bool _resetbuttonenabled  = false;
@@ -71,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
           q.removeFirst(); 
           q.first.startMove();
           board.saveState();
+          if(board.endzone())
+            _endGame();
         });
       };
     }

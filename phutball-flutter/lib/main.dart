@@ -1,9 +1,7 @@
 /*
 todo
 array to erase dots
-undo fucnction
 end game condition
-end turn
 indicate endzones
 */
 
