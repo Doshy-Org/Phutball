@@ -70,9 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
           q.add(q.first);
           q.removeFirst(); 
           q.first.startMove();
+          board.saveState();
         });
       };
     }
+
+    // var _loadState = 
+
 
     return Scaffold(
       body: ListView(
@@ -219,7 +223,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Theme.of(context).accentColor,
                   elevation: 4.0,
                   splashColor: Colors.white,
-                  onPressed: null,
+                  onPressed: (){
+                            setState(() {
+                              board.loadState();
+                              q.first.reset();
+                            });
+                          },
                 ),      
               ],
             ),

@@ -7,6 +7,7 @@ class Board {
   int prevBrow;
   int prevBcol;
   List<List<int>> board;
+  List<List<int>> temp;
   int dx,dy;
   int distance;
 
@@ -19,6 +20,7 @@ class Board {
     rowCount = r;
     columnCount = c;
     board = new List(rowCount);
+    temp = new List(rowCount);
     // board = new List<List<int>>.filled(rowCount, new List<int>(columnCount), growable: false); //big brain code
     prevBrow = (rowCount/2).floor();
     prevBcol = (columnCount/2).floor();
@@ -142,6 +144,31 @@ class Board {
     }
     this.clear(this.prevBrow, this.prevBcol);
     this.setBall(rowNumber,columnNumber);
+  }
+
+  void saveState()
+  {
+    for(int i = 0; i < rowCount; i++)
+    {
+      List<int> tempree = new List(columnCount);
+      for(int j = 0; j < columnCount; j++)
+      {
+        tempree[j] = board[i][j];
+      }
+      temp[i] = tempree;
+    }
+  }
+  void loadState()
+  {
+    for(int i = 0; i < rowCount; i++)
+    {
+      List<int> tempree = new List(columnCount);
+      for(int j = 0; j < columnCount; j++)
+      {
+        tempree[j] = temp[i][j];
+      }
+      board[i] = tempree;
+    }
   }
 
   bool endzone(){  //idk what this is rn

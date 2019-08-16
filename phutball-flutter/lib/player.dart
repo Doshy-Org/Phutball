@@ -54,6 +54,12 @@ class Player {
   {
     canMove = false;
   }
+  void reset()
+  {
+    jumped = false;
+    placed = false;
+    canMove = true;
+  }
   
   void setPlayer (Player b){
       //idk what this is :cold_sweat:
