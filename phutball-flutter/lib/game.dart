@@ -53,8 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   void _endGame()
   {
-    print("Game Over");
-    board.endGame();
+    print("Game Over"); //make notif
+    // board.endGame();
+    board = new Board(rowCount,columnCount);
   }
 
   bool _endbuttonenabled = false;
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    var _endAction;  //end game button calls this
+    var _endAction;  //end turn button calls this
 
     if(q.first.hasJumped() || q.first.hasPlaced()){
       _endAction = (){
@@ -102,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: <Widget>[
                       Text("Level 5 Ai"),
                       Container(height: 2,),
-                      Text("your turn", style: TextStyle(color: Colors.green)), //change according to whos turn it is
+                      Text(q.first.name + "'s Turn", style: TextStyle(color: Colors.green)),
                     ],
                   ),
                 ),        
@@ -148,7 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   if(q.first.canMakeMove())
                   {
                     if(board.isBall(rowNumber,columnNumber) && !board.hasBall()){ //select ball
-                      print("ball selected");
                       setState(() {
                         board.getBall(rowNumber, columnNumber);
                       });
