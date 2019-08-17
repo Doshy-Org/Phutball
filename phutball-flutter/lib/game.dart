@@ -182,10 +182,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       });
                     }
-                    else{ //player done with jumping
-                      //cant do anything
-                      q.first.noMoreMoves();
-                    }
                   }                        
                 },
 
