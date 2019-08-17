@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
           q.removeFirst(); 
           q.first.startMove();
           board.saveState();
+          board.dropBall();
           if(board.endzone())
             _endGame();
         });
