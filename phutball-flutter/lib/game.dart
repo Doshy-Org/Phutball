@@ -50,6 +50,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
       q.add(a);
     }
     q.first.startMove();
+    board.saveState();
   }
   void _endGame()
   {
