@@ -56,7 +56,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
   {
     print("Game Over"); //make notif
     // board.endGame();
-    board = new Board(rowCount,columnCount);
+    _initialiseGame();
   }
 
   bool _endbuttonenabled = false;
@@ -231,6 +231,18 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
                             setState(() {
                               board.loadState();
                               q.first.reset();
+                            });
+                          },
+                ),      
+                new Container(width: 10),
+                new RaisedButton(
+                  child: const Text('Resign'),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.white,
+                  onPressed: (){
+                            setState(() {
+                              _endGame();
                             });
                           },
                 ),      
