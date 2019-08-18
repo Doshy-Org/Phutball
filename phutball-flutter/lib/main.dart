@@ -7,6 +7,7 @@ indicate endzones
 
 import 'package:phutball/game.dart';
 import 'package:flutter/material.dart';
+import 'package:phutball/menu.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        primaryColor: Colors.white,
       ),
-      home: MyHomePage(),
+      home: MenuScreen(),
     );
   }
 }

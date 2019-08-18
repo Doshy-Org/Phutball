@@ -12,12 +12,12 @@ enum ImageType{
   blueend,
 }
 
-class MyHomePage extends StatefulWidget {
+class LocalMultiplayer extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LocalMultiplayerState createState() => _LocalMultiplayerState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LocalMultiplayerState extends State<LocalMultiplayer> {
   // List<List<BoardSquare>> board; //board xd
   //classic is 19 rows 15 cols
   static int rowCount = 19;
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctxt) {
 
     var _endAction;  //end turn button calls this
 
@@ -92,7 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Container( //top bar oponent info or whatever
             padding: const EdgeInsets.all(10.0),
-          
             width: double.infinity,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
