@@ -4,7 +4,7 @@ import 'package:phutball/board.dart';
 import 'package:phutball/player.dart';
 import 'package:flutter/material.dart';
 
-enum ImageType{
+enum ImageType {
   player,
   ball,
   select,
@@ -26,7 +26,6 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
   Player a, b;
   bool turn;
   Queue q = new Queue();
-  
 
   @override
   void initState() {
@@ -34,223 +33,253 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
     _initialiseGame();
   }
 
-  void _initialiseGame() {  //probably inits game 
-    board = new Board(rowCount,columnCount);
+  void _initialiseGame() {
+    //probably inits game
+    board = new Board(rowCount, columnCount);
     a = new Player("A");
     b = new Player("B");
     var rng = new Random();
-    if(rng.nextInt(10)%2 == 0) //big brain ?
+    if (rng.nextInt(10) % 2 == 0) //big brain ?
     {
       q.add(a);
       q.add(b);
-    }
-    else
-    {
-      q.add(b); 
+    } else {
+      q.add(b);
       q.add(a);
     }
     q.first.startMove();
     board.saveState();
   }
-  void _endGame()
-  {
+
+  void _endGame() {
     print("Game Over"); //make notif
     // board.endGame();
     _initialiseGame();
   }
 
-  bool _endbuttonenabled = false;
-  bool _resetbuttonenabled  = false;
-
-
-  
+  void _ResignDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Are You Sure?"),
+          content: new Text("Theres always a chance!"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("Yes"),
+              onPressed: () {
+                setState(() {
+                   _endGame();
+                 
+                });
+               Navigator.of(context).pop(); 
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext ctxt) {
+    var _endAction; //end turn button calls this
 
-    var _endAction;  //end turn button calls this
-
-    if(q.first.hasJumped() || q.first.hasPlaced()){
-      _endAction = (){
-        setState(() { 
+    if (q.first.hasJumped() || q.first.hasPlaced()) {
+      _endAction = () {
+        setState(() {
           q.first.endMove();
           q.add(q.first);
-          q.removeFirst(); 
+          q.removeFirst();
           q.first.startMove();
           board.saveState();
           board.dropBall();
-          if(board.endzone())
-            _endGame();
+          if (board.endzone()) _endGame();
         });
       };
     }
 
-    // var _loadState = 
-
+    // var _loadState =
 
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Container( //top bar oponent info or whatever
-            padding: const EdgeInsets.all(10.0),
-            width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Icon(Icons.face, color: Colors.orange,size: 40.0,),
-                Container(width: 7),   
-                Container(           
-                  child: Column(
-                    children: <Widget>[
-                      Text("Level 5 Ai"),
-                      Container(height: 2,),
-                      Text(q.first.name + "'s Turn", style: TextStyle(color: Colors.green)),
-                    ],
-                  ),
-                ),        
-              ],
-            ),
+      body: ListView(children: <Widget>[
+        Container(
+          //top bar oponent info or whatever
+          padding: const EdgeInsets.all(10.0),
+          width: double.infinity,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                Icons.face,
+                color: Colors.orange,
+                size: 40.0,
+              ),
+              Container(width: 7),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Text("Level 5 Ai"),
+                    Container(
+                      height: 2,
+                    ),
+                    Text(q.first.name + "'s Turn",
+                        style: TextStyle(color: Colors.green)),
+                  ],
+                ),
+              ),
+            ],
           ),
-          GridView.builder(
-            shrinkWrap: true,
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columnCount,
+            mainAxisSpacing: 0.0,
+            crossAxisSpacing: 0.0,
+            childAspectRatio: 1.0,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          itemBuilder: (context, position) {
+            // Get row and column number of square
 
-            physics: NeverScrollableScrollPhysics(),
+            int rowNumber = (position / columnCount).floor();
+            int columnNumber = (position % columnCount);
 
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columnCount,
-              mainAxisSpacing: 0.0,
-              crossAxisSpacing: 0.0,
-              childAspectRatio: 1.0,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            itemBuilder: (context, position) {
-              // Get row and column number of square
+            Image image;
 
-              int rowNumber = (position / columnCount).floor();
-              int columnNumber = (position % columnCount);
-              
-              Image image;
-            
-              if(board.isDot(rowNumber,columnNumber)){  //draw the image into each square
-                image = getImage(ImageType.player);
-              }
-              else if(board.isBall(rowNumber,columnNumber) &&  board.inHand == true ){  //ball selected
-                image = getImage(ImageType.select);
-              }
-              else if(board.isBall(rowNumber,columnNumber)){  
-                image = getImage(ImageType.ball);
-              }
-              else{
-                image = getImage(null);
-              }
+            if (board.isDot(rowNumber, columnNumber)) {
+              //draw the image into each square
+              image = getImage(ImageType.player);
+            } else if (board.isBall(rowNumber, columnNumber) &&
+                board.inHand == true) {
+              //ball selected
+              image = getImage(ImageType.select);
+            } else if (board.isBall(rowNumber, columnNumber)) {
+              image = getImage(ImageType.ball);
+            } else {
+              image = getImage(null);
+            }
 
-              return InkWell(
-                onTap: () // draw square
-                { 
-                  if(q.first.canMakeMove())
+            return InkWell(
+              onTap: () // draw square
                   {
-                    if(board.isBall(rowNumber,columnNumber) && !board.hasBall()){ //select ball
+                if (q.first.canMakeMove()) {
+                  if (board.isBall(rowNumber, columnNumber) &&
+                      !board.hasBall()) {
+                    //select ball
+                    setState(() {
+                      board.getBall(rowNumber, columnNumber);
+                    });
+                  } else if (board.hasBall()) {
+                    //ball is selected, clicked a square
+                    if (board.isBall(rowNumber, columnNumber) ||
+                        board.isDot(rowNumber, columnNumber)) {
+                      //selection totally invalid so deselect ball
                       setState(() {
-                        board.getBall(rowNumber, columnNumber);
+                        board.dropBall();
                       });
-                    }
-                    else if(board.hasBall())
-                    { //ball is selected, clicked a square
-                      if(board.isBall(rowNumber,columnNumber) || board.isDot(rowNumber, columnNumber)){ //selection totally invalid so deselect ball
+                    } else {
+                      board.initJump(rowNumber, columnNumber);
+                      if (board.checkJump(rowNumber, columnNumber)) {
+                        //continue with move
+                        setState(() {
+                          board.jump(rowNumber, columnNumber);
+                          q.first
+                              .makeJump(); //not sure if needs to be in setState
+                        });
+                      } else {
+                        //deselect ball
                         setState(() {
                           board.dropBall();
                         });
                       }
-                      else{
-                        board.initJump(rowNumber,columnNumber);
-                        if(board.checkJump(rowNumber,columnNumber)){ //continue with move
-                          setState(() {
-                            board.jump(rowNumber,columnNumber);
-                            q.first.makeJump(); //not sure if needs to be in setState
-                          });
-                        } 
-                        else{ //deselect ball
-                          setState(() {
-                            board.dropBall();
-                          });
-                        }        
-                      }  
-                    } 
-                    else if(!q.first.hasJumped() && !(board.isDot(rowNumber, columnNumber))){ 
-                      setState(() {
-                        board.setDot(rowNumber,columnNumber);
-                        q.first.makePlacement(); //idk if needs to be in setState        i think they should be
-
-                      });
                     }
-                  }                        
-                },
-
-                splashColor: Colors.lightBlueAccent,
-                child: Container(     
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: ExactAssetImage('images/grid.png'),
-                      fit: BoxFit.cover,
-                    ),
+                  } else if (!q.first.hasJumped() &&
+                      !(board.isDot(rowNumber, columnNumber))) {
+                    setState(() {
+                      board.setDot(rowNumber, columnNumber);
+                      q.first
+                          .makePlacement(); //idk if needs to be in setState        i think they should be
+                    });
+                  }
+                }
+              },
+              splashColor: Colors.lightBlueAccent,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: ExactAssetImage('images/grid.png'),
+                    fit: BoxFit.cover,
                   ),
-                  child: image,   //ball png or whatever
                 ),
-              );
-            },
-            itemCount: rowCount * columnCount,
-         ),
-          Container( //bottom bar info game or whatever
-            padding: const EdgeInsets.all(10.0),
-            width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new RaisedButton(
-                  child: const Text('End Turn'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.white,
-                  onPressed: _endAction, //refer to top
-                    // end turn
-                    /*if(q.first.hasJumped() || q.first.hasPlaced())
+                child: image, //ball png or whatever
+              ),
+            );
+          },
+          itemCount: rowCount * columnCount,
+        ),
+        Container(
+          //bottom bar info game or whatever
+          padding: const EdgeInsets.all(10.0),
+          width: double.infinity,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new RaisedButton(
+                child: const Text('End Turn'),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.white,
+                onPressed: _endAction, //refer to top
+                // end turn
+                /*if(q.first.hasJumped() || q.first.hasPlaced())
                       q.first.endMove();
                     q.add(q.first);
                     q.removeFirst();
                     // print(q.first.name);
                     // print(q.last.name);
                     q.first.startMove();*/
-                ),
-                new Container(width: 10),
-                new RaisedButton(
-                  child: const Text('Reset'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.white,
-                  onPressed: (){
-                            setState(() {
-                              board.loadState();
-                              q.first.reset();
-                            });
-                          },
-                ),      
-                new Container(width: 10),
-                new RaisedButton(
-                  child: const Text('Resign'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.white,
-                  onPressed: (){
-                            setState(() {
-                              _endGame();
-                            });
-                          },
-                ),      
-              ],
-            ),
+              ),
+              new Container(width: 10),
+              new RaisedButton(
+                child: const Text('Reset'),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    board.loadState();
+                    q.first.reset();
+                  });
+                },
+              ),
+              new Container(width: 10),
+              new RaisedButton(
+                child: const Text('Resign'),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    _ResignDialog();
+                  });
+                },
+              ),
+            ],
           ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
 
