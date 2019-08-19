@@ -171,21 +171,21 @@ class Board {
     }
   }
 
-  bool endzone(){  //idk what this is rn
+  int endzone(){  //idk what this is rn
     for(int i = 0; i < columnCount; i++)
     {
       if(board[0][i] == 2) //need to add win beyond line
       {
-        print("Player blah wins!"); //which player goes to which line and we need to pass player names here eggs dee
-        return true;
+        // print("Player blah wins!"); //which player goes to which line and we need to pass player names here eggs dee
+        return 0; //first player wins
       }
       if (board[18][i] == 2) 
       {
-        print("Player blob wins!"); //also make it a notif
-        return true;
+        // print("Player blob wins!"); //also make it a notif
+        return 1; //second player wins
       }
     }
-    return false;
+    return 2; //not win
   }
 
   void endGame()

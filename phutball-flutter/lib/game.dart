@@ -23,7 +23,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
   static int rowCount = 19;
   static int columnCount = 15;
   Board board;
-  Player a, b;
+  Player a, b, winner;
   bool turn;
   Queue q = new Queue();
 
@@ -50,11 +50,25 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
     q.first.startMove();
     board.saveState();
   }
+  void _playAgain() {
+    //probably inits game
+    board = new Board(rowCount, columnCount);
+    var rng = new Random();
+    q.clear();
+    if (rng.nextInt(10) % 2 == 0) //big brain ?
+    {
+      q.add(a);
+      q.add(b);
+    } else {
+      q.add(b);
+      q.add(a);
+    }
+    q.first.startMove();
+    board.saveState();
+  }
 
   void _endGame() {
-    print("Game Over"); //make notif
-    // board.endGame();
-    _initialiseGame();
+    _endDialog();
   }
 
   void _ResignDialog() {
@@ -65,7 +79,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Are You Sure?"),
-          content: new Text("Theres always a chance!"),
+          content: new Text("There's always a chance!"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
@@ -79,7 +93,41 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
               onPressed: () {
                 setState(() {
                    _endGame();
-                 
+                });
+               Navigator.of(context).pop(); 
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _endDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Player " + winner.name + " wins!"),
+          content: new Text("Scoreboard:\n" + a.name + ": " + a.score.toString() + "\n" + b.name + ": " + b.score.toString() + "\n\nPlay again?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Yes"),
+              onPressed: () {
+                setState(() {
+                   _playAgain();
+                });
+               Navigator.of(context).pop(); 
+              },
+            ),
+            new FlatButton(
+              child: new Text("No"),
+              onPressed: () {
+                setState(() {
+                   _initialiseGame();
                 });
                Navigator.of(context).pop(); 
               },
@@ -103,7 +151,16 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
           q.first.startMove();
           board.saveState();
           board.dropBall();
-          if (board.endzone()) _endGame();
+          if(board.endzone() == 0){
+            winner = a; //first player instead of a
+            a.win();
+            _endGame();
+          }
+          if(board.endzone() == 1){
+            winner = b; //second player instead of b
+            b.win();
+            _endGame();
+          }
         });
       };
     }

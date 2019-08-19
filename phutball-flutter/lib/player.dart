@@ -1,5 +1,5 @@
 class Player {
-  int moved; // if you have moved you can end turn or undo, cannot click more
+  int score;
   bool playerTurn;
   bool jumped;
   bool placed;
@@ -13,6 +13,7 @@ class Player {
     placed = false;
     canMove = true;
     name = n;
+    score = 0;
   }
   void startMove()
   {
@@ -59,6 +60,10 @@ class Player {
     jumped = false;
     placed = false;
     canMove = true;
+  }
+  void win()
+  {
+    score++;
   }
   
   void setPlayer (Player b){
