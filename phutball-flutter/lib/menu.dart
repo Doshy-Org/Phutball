@@ -1,5 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:phutball/game.dart';
+import 'package:phutball/localmult.dart';
+
+class SlideRightRoute extends PageRouteBuilder {
+  final Widget page;
+  SlideRightRoute({this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              ),
+        );
+}
+
 class MenuScreen extends StatelessWidget {
   @override
   Widget build (BuildContext ctxt) {
@@ -7,8 +34,8 @@ class MenuScreen extends StatelessWidget {
       body: (
         Center(
           child: Container(
-          margin: const EdgeInsets.only(top: 40),
-          padding: const EdgeInsets.all(70.0),
+          margin: const EdgeInsets.only(top: 60),
+          padding: const EdgeInsets.all(50.0),
           width: double.infinity,
           constraints: BoxConstraints.expand(),
 
@@ -27,7 +54,7 @@ class MenuScreen extends StatelessWidget {
                     onPressed: (){
                       Navigator.push(
                         ctxt,
-                        new MaterialPageRoute(builder: (ctxt) => new ModeSelectScreen()),
+                        SlideRightRoute(page: ModeSelectScreen()),
                       );
                     },
                   ),
@@ -60,7 +87,7 @@ class ModeSelectScreen extends StatelessWidget { //select gamemode screen
     return new Scaffold(
       appBar: AppBar(
         title: Text('Mode Select'),
-        
+        backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0.0,
       ),
       body: (
@@ -75,7 +102,7 @@ class ModeSelectScreen extends StatelessWidget { //select gamemode screen
                 onTap: (){
                   Navigator.push(
                     ctxt,
-                    new MaterialPageRoute(builder: (ctxt) => new LocalMultiplayer()),
+                    SlideRightRoute(page: LocalMultiplayer()),
                   );
                 },
                 child: Card(

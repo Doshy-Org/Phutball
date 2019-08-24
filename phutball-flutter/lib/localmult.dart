@@ -71,8 +71,8 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
     _endDialog();
   }
 
-  void _ResignDialog() {
-    // flutter defined function
+  void _ResignDialog() {  //this isnt working reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -130,6 +130,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
                    _initialiseGame();
                 });
                Navigator.of(context).pop(); 
+               Navigator.of(context).pop(); //pop dialog then pop page, return to menu
               },
             ),
           ],
@@ -176,21 +177,22 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Icon(
-                Icons.face,
-                color: Colors.orange,
-                size: 40.0,
+              IconButton(
+                icon:Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(ctxt).pop();
+                },
               ),
               Container(width: 7),
               Container(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Level 5 Ai"),
+                    Text("Local Multiplayer", style: TextStyle(fontSize: 20), ),
                     Container(
-                      height: 2,
+                      height: 4,
                     ),
-                    Text(q.first.name + "'s Turn",
-                        style: TextStyle(color: Colors.green)),
+                    Text(q.first.name + "'s Turn", style: TextStyle(color: Colors.green), textAlign: TextAlign.left,),
                   ],
                 ),
               ),
@@ -252,8 +254,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
                         //continue with move
                         setState(() {
                           board.jump(rowNumber, columnNumber);
-                          q.first
-                              .makeJump(); //not sure if needs to be in setState
+                          q.first.makeJump(); //not sure if needs to be in setState
                         });
                       } else {
                         //deselect ball
@@ -266,8 +267,7 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
                       !(board.isDot(rowNumber, columnNumber))) {
                     setState(() {
                       board.setDot(rowNumber, columnNumber);
-                      q.first
-                          .makePlacement(); //idk if needs to be in setState        i think they should be
+                      q.first.makePlacement(); //idk if needs to be in setState        i think they should be
                     });
                   }
                 }
@@ -299,14 +299,6 @@ class _LocalMultiplayerState extends State<LocalMultiplayer> {
                 elevation: 4.0,
                 splashColor: Colors.white,
                 onPressed: _endAction, //refer to top
-                // end turn
-                /*if(q.first.hasJumped() || q.first.hasPlaced())
-                      q.first.endMove();
-                    q.add(q.first);
-                    q.removeFirst();
-                    // print(q.first.name);
-                    // print(q.last.name);
-                    q.first.startMove();*/
               ),
               new Container(width: 10),
               new RaisedButton(

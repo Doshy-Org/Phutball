@@ -193,7 +193,4 @@ class Board {
     print("ree");
   }
 
-  void setBoard (Board b){
-      //will this work
-  } 
 }
